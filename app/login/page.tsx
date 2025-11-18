@@ -184,7 +184,7 @@ export default function LoginPage() {
               )}
             </AnimatePresence>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleLogin} className="space-y-6">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
