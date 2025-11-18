@@ -58,14 +58,21 @@ export default function AdminLayout({
 }, [router])
 
 
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth)
-        router.push('/login')
-    } catch (error) {
-      console.error('Error signing out:', error)
+ const handleSignOut = async () => {
+  try {
+    if (!auth) {
+      console.warn('Firebase Auth not initialized – skipping sign out.')
+      router.push('/login')
+      return
     }
+
+    await signOut(auth)
+    router.push('/login')
+  } catch (error) {
+    console.error('Error signing out:', error)
   }
+}
+
 
   if (loading) {
     return (
