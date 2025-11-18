@@ -7,8 +7,7 @@ import {
   updateDoc, 
   deleteDoc, 
   query, 
-  where, 
-  orderBy,
+  where,
   Timestamp,
   DocumentData
 } from 'firebase/firestore'
@@ -26,7 +25,7 @@ const COLLECTIONS = {
   CONTACT: 'contact'
 }
 
-// Helper to convert Firestore data
+// Helper to convert Firestore Timestamps
 const convertTimestamp = (data: DocumentData) => {
   const converted = { ...data }
   Object.keys(converted).forEach(key => {
@@ -37,8 +36,12 @@ const convertTimestamp = (data: DocumentData) => {
   return converted
 }
 
-// ============ STARTUPS ============
+// ===================================================================================
+// STARTUPS
+// ===================================================================================
 export async function getStartupsFromDB(): Promise<Startup[]> {
+  if (!db) return [];
+
   try {
     const querySnapshot = await getDocs(collection(db, COLLECTIONS.STARTUPS))
     return querySnapshot.docs.map(doc => ({
@@ -52,12 +55,14 @@ export async function getStartupsFromDB(): Promise<Startup[]> {
 }
 
 export async function getStartupBySlugFromDB(slug: string): Promise<Startup | null> {
+  if (!db) return null;
+
   try {
     const q = query(collection(db, COLLECTIONS.STARTUPS), where('slug', '==', slug))
     const querySnapshot = await getDocs(q)
     if (querySnapshot.empty) return null
-    const doc = querySnapshot.docs[0]
-    return { id: doc.id, ...convertTimestamp(doc.data()) } as Startup
+    const _doc = querySnapshot.docs[0]
+    return { id: _doc.id, ...convertTimestamp(_doc.data()) } as Startup
   } catch (error) {
     console.error('Error fetching startup:', error)
     return null
@@ -65,26 +70,33 @@ export async function getStartupBySlugFromDB(slug: string): Promise<Startup | nu
 }
 
 export async function addStartupToDB(startup: Omit<Startup, 'id'>): Promise<string> {
+  if (!db) return "";
   const docRef = await addDoc(collection(db, COLLECTIONS.STARTUPS), startup)
   return docRef.id
 }
 
 export async function updateStartupInDB(id: string, startup: Partial<Startup>): Promise<void> {
+  if (!db) return;
   await updateDoc(doc(db, COLLECTIONS.STARTUPS, id), startup)
 }
 
 export async function deleteStartupFromDB(id: string): Promise<void> {
+  if (!db) return;
   await deleteDoc(doc(db, COLLECTIONS.STARTUPS, id))
 }
 
-// ============ EVENTS ============
+// ===================================================================================
+// EVENTS
+// ===================================================================================
 export async function getEventsFromDB(): Promise<Event[]> {
+  if (!db) return [];
+
   try {
     const querySnapshot = await getDocs(collection(db, COLLECTIONS.EVENTS))
     return querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...convertTimestamp(doc.data())
-    } as Event)).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    } as Event))
   } catch (error) {
     console.error('Error fetching events:', error)
     return []
@@ -92,12 +104,14 @@ export async function getEventsFromDB(): Promise<Event[]> {
 }
 
 export async function getEventBySlugFromDB(slug: string): Promise<Event | null> {
+  if (!db) return null;
+
   try {
     const q = query(collection(db, COLLECTIONS.EVENTS), where('slug', '==', slug))
     const querySnapshot = await getDocs(q)
     if (querySnapshot.empty) return null
-    const doc = querySnapshot.docs[0]
-    return { id: doc.id, ...convertTimestamp(doc.data()) } as Event
+    const _doc = querySnapshot.docs[0]
+    return { id: _doc.id, ...convertTimestamp(_doc.data()) } as Event
   } catch (error) {
     console.error('Error fetching event:', error)
     return null
@@ -105,20 +119,27 @@ export async function getEventBySlugFromDB(slug: string): Promise<Event | null> 
 }
 
 export async function addEventToDB(event: Omit<Event, 'id'>): Promise<string> {
+  if (!db) return "";
   const docRef = await addDoc(collection(db, COLLECTIONS.EVENTS), event)
   return docRef.id
 }
 
 export async function updateEventInDB(id: string, event: Partial<Event>): Promise<void> {
+  if (!db) return;
   await updateDoc(doc(db, COLLECTIONS.EVENTS, id), event)
 }
 
 export async function deleteEventFromDB(id: string): Promise<void> {
+  if (!db) return;
   await deleteDoc(doc(db, COLLECTIONS.EVENTS, id))
 }
 
-// ============ NOTICES ============
+// ===================================================================================
+// NOTICES
+// ===================================================================================
 export async function getNoticesFromDB(): Promise<Notice[]> {
+  if (!db) return [];
+
   try {
     const querySnapshot = await getDocs(collection(db, COLLECTIONS.NOTICES))
     return querySnapshot.docs.map(doc => ({
@@ -132,20 +153,27 @@ export async function getNoticesFromDB(): Promise<Notice[]> {
 }
 
 export async function addNoticeToDB(notice: Omit<Notice, 'id'>): Promise<string> {
+  if (!db) return "";
   const docRef = await addDoc(collection(db, COLLECTIONS.NOTICES), notice)
   return docRef.id
 }
 
 export async function updateNoticeInDB(id: string, notice: Partial<Notice>): Promise<void> {
+  if (!db) return;
   await updateDoc(doc(db, COLLECTIONS.NOTICES, id), notice)
 }
 
 export async function deleteNoticeFromDB(id: string): Promise<void> {
+  if (!db) return;
   await deleteDoc(doc(db, COLLECTIONS.NOTICES, id))
 }
 
-// ============ CAROUSEL ============
+// ===================================================================================
+// CAROUSEL
+// ===================================================================================
 export async function getCarouselImagesFromDB(): Promise<CarouselImage[]> {
+  if (!db) return [];
+
   try {
     const querySnapshot = await getDocs(collection(db, COLLECTIONS.CAROUSEL))
     return querySnapshot.docs.map(doc => ({
@@ -159,20 +187,27 @@ export async function getCarouselImagesFromDB(): Promise<CarouselImage[]> {
 }
 
 export async function addCarouselImageToDB(image: Omit<CarouselImage, 'id'>): Promise<string> {
+  if (!db) return "";
   const docRef = await addDoc(collection(db, COLLECTIONS.CAROUSEL), image)
   return docRef.id
 }
 
 export async function updateCarouselImageInDB(id: string, image: Partial<CarouselImage>): Promise<void> {
+  if (!db) return;
   await updateDoc(doc(db, COLLECTIONS.CAROUSEL, id), image)
 }
 
 export async function deleteCarouselImageFromDB(id: string): Promise<void> {
+  if (!db) return;
   await deleteDoc(doc(db, COLLECTIONS.CAROUSEL, id))
 }
 
-// ============ TEAM ============
+// ===================================================================================
+// TEAM
+// ===================================================================================
 export async function getTeamMembersFromDB(): Promise<TeamMember[]> {
+  if (!db) return [];
+
   try {
     const querySnapshot = await getDocs(collection(db, COLLECTIONS.TEAM))
     return querySnapshot.docs.map(doc => ({
@@ -186,20 +221,27 @@ export async function getTeamMembersFromDB(): Promise<TeamMember[]> {
 }
 
 export async function addTeamMemberToDB(member: Omit<TeamMember, 'id'>): Promise<string> {
+  if (!db) return "";
   const docRef = await addDoc(collection(db, COLLECTIONS.TEAM), member)
   return docRef.id
 }
 
 export async function updateTeamMemberInDB(id: string, member: Partial<TeamMember>): Promise<void> {
+  if (!db) return;
   await updateDoc(doc(db, COLLECTIONS.TEAM, id), member)
 }
 
 export async function deleteTeamMemberFromDB(id: string): Promise<void> {
+  if (!db) return;
   await deleteDoc(doc(db, COLLECTIONS.TEAM, id))
 }
 
-// ============ FAQS ============
+// ===================================================================================
+// FAQS
+// ===================================================================================
 export async function getFAQsFromDB(): Promise<FAQ[]> {
+  if (!db) return [];
+
   try {
     const querySnapshot = await getDocs(collection(db, COLLECTIONS.FAQS))
     return querySnapshot.docs.map(doc => ({
@@ -213,25 +255,32 @@ export async function getFAQsFromDB(): Promise<FAQ[]> {
 }
 
 export async function addFAQToDB(faq: Omit<FAQ, 'id'>): Promise<string> {
+  if (!db) return "";
   const docRef = await addDoc(collection(db, COLLECTIONS.FAQS), faq)
   return docRef.id
 }
 
 export async function updateFAQInDB(id: string, faq: Partial<FAQ>): Promise<void> {
+  if (!db) return;
   await updateDoc(doc(db, COLLECTIONS.FAQS, id), faq)
 }
 
 export async function deleteFAQFromDB(id: string): Promise<void> {
+  if (!db) return;
   await deleteDoc(doc(db, COLLECTIONS.FAQS, id))
 }
 
-// ============ CONTACT INFO ============
+// ===================================================================================
+// CONTACT
+// ===================================================================================
 export async function getContactInfoFromDB(): Promise<ContactInfo | null> {
+  if (!db) return null;
+
   try {
     const querySnapshot = await getDocs(collection(db, COLLECTIONS.CONTACT))
     if (querySnapshot.empty) return null
-    const doc = querySnapshot.docs[0]
-    return { ...doc.data() } as ContactInfo
+    const _doc = querySnapshot.docs[0]
+    return { ..._doc.data() } as ContactInfo
   } catch (error) {
     console.error('Error fetching contact info:', error)
     return null
@@ -239,11 +288,13 @@ export async function getContactInfoFromDB(): Promise<ContactInfo | null> {
 }
 
 export async function updateContactInfoInDB(contact: Partial<ContactInfo>): Promise<void> {
+  if (!db) return;
+
   const querySnapshot = await getDocs(collection(db, COLLECTIONS.CONTACT))
   if (querySnapshot.empty) {
     await addDoc(collection(db, COLLECTIONS.CONTACT), contact)
   } else {
     const docId = querySnapshot.docs[0].id
-    await updateDoc(doc(db, COLLECTIONS.CONTACT, docId), contact as any)
+    await updateDoc(doc(db, COLLECTIONS.CONTACT, docId), contact)
   }
 }
