@@ -32,21 +32,23 @@ export default function LoginPage() {
 }, [router]);
 
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+ const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    try {
-      await signInWithEmailAndPassword(auth, email, password)
-      router.push('/admin')
-    } catch (error: any) {
-      console.error('Login error:', error)
-      setError(error.message || 'Failed to sign in. Please check your credentials.')
-    } finally {
-      setLoading(false)
+  try {
+    // Prevent crashes if Firebase isn't initialized
+    if (!auth) {
+      console.warn('Firebase is not initialized — cannot sign in.');
+      throw new Error('Firebase Auth not initialized');
     }
+
+    await signInWithEmailAndPassword(auth, email, password);
+    router.push('/admin');
+  } catch (error: any) {
+    console.error('Login error:', error);
   }
+};
+
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 flex items-center justify-center px-4">
