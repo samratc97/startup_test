@@ -17,15 +17,20 @@ export default function LoginPage() {
   const [passwordFocused, setPasswordFocused] = useState(false)
   const router = useRouter()
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        router.push('/admin')
-      }
-    })
+ useEffect(() => {
+  if (!auth) {
+    return;
+  }
 
-    return () => unsubscribe()
-  }, [router])
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (user) {
+      router.push('/admin');
+    }
+  });
+
+  return () => unsubscribe();
+}, [router]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
