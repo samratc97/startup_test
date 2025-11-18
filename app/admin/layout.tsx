@@ -40,17 +40,23 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const router = useRouter()
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user)
-      setLoading(false)
-      if (!user) {
-          router.push('/login')
-      }
-    })
+ useEffect(() => {
+  if (!auth) {
+    setLoading(false);
+    return;
+  }
 
-    return () => unsubscribe()
-  }, [router])
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    setUser(user)
+    setLoading(false)
+    if (!user) {
+      router.push('/login')
+    }
+  })
+
+  return () => unsubscribe()
+}, [router])
+
 
   const handleSignOut = async () => {
     try {
